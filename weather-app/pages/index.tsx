@@ -1,31 +1,61 @@
-import { ReactNode, useEffect, useState } from "react";
-import styles from "../styles/Home.module.css";
-import InputComponent from "../components/InputComponent";
-import ListComponent from "../components/ListComponent";
+import { useEffect, useLayoutEffect, useState } from "react";
+import InputComponent from "../containers/InputComponent";
+import ListComponent from "../containers/ListComponent";
+import CardComponent from "../containers/CardComponent";
+import Head from "next/head";
+import { Col, Container, Row, Stack } from "react-bootstrap";
+import LocationContext from "../utils/locationsContext";
+import UserLocation from "../interfaces/userLocationInterface";
 
-export default function Home() {
-  const [userLocation, setUserLocation] = useState({});
+const DEFAULT_USER_LOCATION: UserLocation = {
+  coords: {
+    latitude: 38.7259284,
+    longitude: -9.137382,
+  },
+};
 
-  const [position, setPosition] = useState<GeolocationPosition>();
+const Home: React.FunctionComponent = () => {
+  const [location, setLocation] = useState<GeolocationPosition>();
+  const [locations, setLocations] = useState<Array<string>>([]);
 
   useEffect(() => {
     window.navigator.geolocation.getCurrentPosition(
-      (newPos: GeolocationPosition) => setPosition(newPos),
+      (newPos: GeolocationPosition) => setLocation(newPos),
       console.error
     );
   }, []);
 
+  useLayoutEffect(() => {
+    if (sessionStorage.getItem("locationsState")) {
+      setLocations(sessionStorage.getItem("locationsState")!.split(","));
+    }
+  }, []);
+
   return (
-    <div className={styles.container}>
-      <h1>Hello World</h1>
-      {position && (
-        <output>
-          latitude: {position.coords.latitude}, longitude:{" "}
-          {position.coords.longitude}
-        </output>
-      )}
-      <InputComponent />
-      <ListComponent />
+    <div>
+      <Head>
+        <title>Tamanna Weather app</title>
+      </Head>
+      <LocationContext.Provider value={{ locations, setLocations }}>
+        <Container>
+          <Row className="justify-content-md-center">
+            <Col xs={6} style={{ padding: 5 }}>
+              <h1>Tamanna Weather app</h1>
+              <Stack gap={3}>
+                <CardComponent
+                  location={
+                    location ? location : (DEFAULT_USER_LOCATION as any)
+                  }
+                />
+                <InputComponent />
+                <ListComponent />
+              </Stack>
+            </Col>
+          </Row>
+        </Container>
+      </LocationContext.Provider>
     </div>
   );
-}
+};
+
+export default Home;
