@@ -17,7 +17,6 @@ const CardComponent: React.FunctionComponent<{
         const response = await axios.get(
           `/api/getWeather?lat=${location.coords.latitude}&long=${location.coords.longitude}`
         );
-        console.log(response.data);
         setWeatherData(response.data);
       }
     };

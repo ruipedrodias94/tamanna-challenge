@@ -1,17 +1,24 @@
-import Image from "next/image";
-import { Col, Container, Row, Card } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
 import axios, { AxiosResponse } from "axios";
 import CardLayout from "../../components/CardLayout";
 
+/**
+ * Try to use ssr in order to fetch the details of a specific
+ * location
+ *
+ * @param context context of nextjs app
+ * @returns
+ */
 export async function getServerSideProps(context: any) {
   const { query } = context;
 
-  const { _id, index, location } = query;
+  const { location } = query;
 
   const [city, country] = location.toString().split("-");
 
   let response: AxiosResponse<any>;
 
+  // Get the data from our api in the api folder
   response = await axios.get(
     `http://localhost:3000/api/getWeather?city=${city}&country=${country}`
   );
@@ -21,9 +28,9 @@ export async function getServerSideProps(context: any) {
   };
 }
 
-export default function Location({ weatherData }: any) {
-  console.log(weatherData);
-
+const Location: React.FunctionComponent<{ weatherData: any }> = ({
+  weatherData,
+}) => {
   return (
     <div>
       <Container>
@@ -35,4 +42,6 @@ export default function Location({ weatherData }: any) {
       </Container>
     </div>
   );
-}
+};
+
+export default Location;

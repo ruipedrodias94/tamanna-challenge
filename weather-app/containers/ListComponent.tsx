@@ -6,6 +6,7 @@ import LocationContext from "../utils/locationsContext";
 const ListComponent: React.FunctionComponent = () => {
   const locationContext = useContext(LocationContext);
 
+  // Function used to delete items from the list of cities
   const deleteItemFromList = (itemIndex: number) => {
     if (locationContext.locations) {
       const newLocations = [...locationContext.locations];

@@ -1,12 +1,13 @@
+import Head from "next/head";
 import { useEffect, useLayoutEffect, useState } from "react";
+import { Col, Container, Row, Stack } from "react-bootstrap";
 import InputComponent from "../containers/InputComponent";
 import ListComponent from "../containers/ListComponent";
 import CardComponent from "../containers/CardComponent";
-import Head from "next/head";
-import { Col, Container, Row, Stack } from "react-bootstrap";
 import LocationContext from "../utils/locationsContext";
 import UserLocation from "../interfaces/userLocationInterface";
 
+// Default location for when the browser could not determine the user location
 const DEFAULT_USER_LOCATION: UserLocation = {
   coords: {
     latitude: 38.7259284,
@@ -15,9 +16,15 @@ const DEFAULT_USER_LOCATION: UserLocation = {
 };
 
 const Home: React.FunctionComponent = () => {
+  // Active user location
   const [location, setLocation] = useState<GeolocationPosition>();
+  // Array of locations for future detail view
   const [locations, setLocations] = useState<Array<string>>([]);
 
+  /**
+   * Use effect that will run on component rendering in order to
+   * fetch the user's location via navigator.geolocation API
+   */
   useEffect(() => {
     window.navigator.geolocation.getCurrentPosition(
       (newPos: GeolocationPosition) => setLocation(newPos),
@@ -25,6 +32,11 @@ const Home: React.FunctionComponent = () => {
     );
   }, []);
 
+  /**
+   * Get locations from session storage in order to prevent the app
+   * to lost locations from context every time we navigate through
+   * pages
+   */
   useLayoutEffect(() => {
     if (sessionStorage.getItem("locationsState")) {
       setLocations(sessionStorage.getItem("locationsState")!.split(","));

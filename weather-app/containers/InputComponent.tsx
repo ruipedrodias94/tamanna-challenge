@@ -43,7 +43,7 @@ const InputComponent: React.FunctionComponent = () => {
           value={location}
         ></Form.Control>
         <Form.Text className="text-muted">
-          Should be a string with the name of the city
+          (Format should be CITY-COUNTRY_CODE)
         </Form.Text>
         <br />
         <Button
